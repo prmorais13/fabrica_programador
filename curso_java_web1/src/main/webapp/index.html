@@ -4,24 +4,11 @@
 		<meta charset="UTF-8">
 		<title>Curso FDP - Módulo 3</title>
 		
-		<link rel="stylesheet" type="text/css" href="css/style.css">
-		
-		<script type="text/javascript">
-			function validar() {
-				usuario = document.getElementById('txtUsuario').value;
-				senha = document.getElementById('txtSenha').value;
-				
-				if(usuario == "" || senha == "") {
-					window.alert('Usuário e Senha devem ser informados!');
-					return false;
-				}
-				
-				return true;
-			}
-		</script>
+		<link rel="stylesheet" type="text/css" href="css/style.css">	
+		<script type="text/javascript" src="js/autenticacao.js"></script>
 	</head>
 	<body>
-		<form method="POST" onsubmit="return validar()">
+		<form method="POST" onsubmit="return aut.validarCampos()">
 			<input id="txtUsuario" name="txtUsuario" type="text" value="" placeholder="Usuario">
 			<input id="txtSenha" name="txtSenha" type="password" value="" placeholder="Senha">
 			<input type="submit" value="Autenticar">
