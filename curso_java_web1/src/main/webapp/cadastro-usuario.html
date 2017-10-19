@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro usuário</title>
+
+    <script>
+        usuarioController = function () {
+            this.usuarios = [];
+
+            // Create
+            this.adicionar = function (usuario) {
+                this.usuarios.push(usuario);
+            }
+
+            // Retrieve
+            this.listarTodos = function () {
+                return this.usuarios;
+            }
+
+            // Update
+            this.alterar = function (usu) {
+
+            }
+
+            // Delete
+            this.excluir = function () {
+
+            }
+
+
+            this.aoClicarListar = function () {
+                usuarios = this.listarTodos();
+                this.renderizarTabelaUsuarios(usuarios);
+            }
+
+            this.renderizarTabelaUsuarios = function(arrUsuarios) {
+                dados = "";
+                
+                for(i = 0; i < arrUsuarios.length; i++) {
+                    dados += "<tr><td>" + arrUsuarios[i].nome + "</td><td>" + arrUsuarios[i].senha + "</td></tr>";
+                }
+                document.getElementById('tbUsuarios').innerHTML = dados;
+
+            }
+
+            this.aoClicarSalvar = function () {
+                //Leitura dos dados
+                nomeUsuario = document.getElementById('txtUsuario').value;
+                senhaUsuario = document.getElementById('txtSenha').value;
+
+                // Constroi objeto usuario
+                usu = { nome: nomeUsuario, senha: senhaUsuario };
+
+                // Adicionar ao vetor
+                this.adicionar(usu);
+            }
+
+
+        }
+
+        uc = new usuarioController();
+
+    </script>
+</head>
+
+<body>
+    <form method="post">
+        <input id="txtUsuario" type="text" placeholder="Nome usuário">
+        <input id="txtSenha" type="password" placeholder="Senha">
+
+        <input type="button" value="Salvar" onclick="uc.aoClicarSalvar()">
+        <input type="button" value="Listar" onclick="uc.aoClicarListar()">
+    </form>
+    <br>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Senha</th>
+            </tr>
+        </thead>
+
+        <tbody id="tbUsuarios"></tbody>
+    </table>
+</body>
+
+<script>
+    
+</script>
+
+</html>
