@@ -20,29 +20,65 @@
             }
 
             // Update
-            this.alterar = function (usu) {
-
+            this.alterar = function (indice, usuario) {
+                //usuarioEncontrado = this.buscarPorIndice(indice);
+                this.usuarios.splice(indice, 1, usuario);
             }
 
             // Delete
-            this.excluir = function () {
+            this.excluir = function (indice) {
+                this.usuarios.splice(indice, 1);
+            }
+
+            this.modoEdicao = false;
+
+            // Renderiza o DOM
+            this.renderizarTabelaUsuarios = function (arrUsuarios) {
+                dados = "";
+
+                for (i = 0; i < arrUsuarios.length; i++) {
+                    dados += "<tr>";
+                    dados += "<td>" + arrUsuarios[i].nome + "</td>";
+                    dados += "<td>" + arrUsuarios[i].senha + "</td>";
+                    dados += "<td><input type='button' value='Excluir' onclick='uc.aoClicarExcluir(" + i + ")'>";
+                    dados += "<input type='button' value='Editar' onclick='uc.aoClicarEditar(" + i + ")'></td>";
+                    dados += "</tr>"
+                }
+                document.getElementById('tbUsuarios').innerHTML = dados;
 
             }
 
+            this.limparCampos = function () {
+                this.modoEdicao = false;
+                document.getElementById('txtUsuario').value = "";
+                document.getElementById('txtSenha').value = "";
+            }
 
+            this.buscarPorIndice = function (indice) {
+                return this.usuarios[indice];
+            }
+
+            // Eventos dos botões
             this.aoClicarListar = function () {
                 usuarios = this.listarTodos();
                 this.renderizarTabelaUsuarios(usuarios);
             }
 
-            this.renderizarTabelaUsuarios = function(arrUsuarios) {
-                dados = "";
-                
-                for(i = 0; i < arrUsuarios.length; i++) {
-                    dados += "<tr><td>" + arrUsuarios[i].nome + "</td><td>" + arrUsuarios[i].senha + "</td></tr>";
-                }
-                document.getElementById('tbUsuarios').innerHTML = dados;
+            this.aoClicarExcluir = function (indice) {
+                this.excluir(indice);
+                this.aoClicarListar();
+            }
 
+            this.aoClicarEditar = function (indice) {
+                this.modoEdicao = true;
+                this.indiceEdicao = indice;
+                usuarioEncontrado = this.buscarPorIndice(indice);
+                document.getElementById('txtUsuario').value = usuarioEncontrado.nome;
+                document.getElementById('txtSenha').value = usuarioEncontrado.senha;
+            }
+
+            this.aoClicarCancelar = function () {
+                this.limparCampos();
             }
 
             this.aoClicarSalvar = function () {
@@ -54,7 +90,14 @@
                 usu = { nome: nomeUsuario, senha: senhaUsuario };
 
                 // Adicionar ao vetor
-                this.adicionar(usu);
+                if (this.modoEdicao) {
+                    this.alterar(this.indiceEdicao, usu);
+                } else {
+                    this.adicionar(usu);
+                }
+
+                this.aoClicarListar();
+                this.limparCampos();
             }
 
 
@@ -71,7 +114,7 @@
         <input id="txtSenha" type="password" placeholder="Senha">
 
         <input type="button" value="Salvar" onclick="uc.aoClicarSalvar()">
-        <input type="button" value="Listar" onclick="uc.aoClicarListar()">
+        <input type="button" value="Cancelar" onclick="uc.aoClicarCancelar()">
     </form>
     <br>
     <table border="1">
@@ -79,6 +122,7 @@
             <tr>
                 <th>Nome</th>
                 <th>Senha</th>
+                <th>Opções</th>
             </tr>
         </thead>
 
@@ -87,7 +131,7 @@
 </body>
 
 <script>
-    
+
 </script>
 
 </html>
