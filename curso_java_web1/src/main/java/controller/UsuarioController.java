@@ -1,6 +1,8 @@
 package controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,6 +16,22 @@ import model.Usuario;
 public class UsuarioController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+	
+	List<Usuario> usuarios = new ArrayList<>();
+	
+	public void cadastrar(Usuario usuario) {
+		this.usuarios.add(usuario);
+	}
+	
+	public void excluir(Usuario usuario) {
+		this.usuarios.remove(usuario);
+	}
+	
+	public List<Usuario> buscarTodos() {
+		return this.usuarios;
+	}
+	
+	
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -28,14 +46,15 @@ public class UsuarioController extends HttpServlet {
 		usuario.setSenha(senha);
 		
 		//gravar
-		
+		this.cadastrar(usuario);
 		//resposta
 		resp.getWriter().println("Cadastrado: " + nome + " " + senha);
 	}
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.getWriter().println("Requesitou pelo GET");
+		
+		resp.getWriter().println(this.buscarTodos());
 	}
 	
 	@Override
@@ -45,6 +64,8 @@ public class UsuarioController extends HttpServlet {
 	
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		
 		resp.getWriter().println("Requesitou pelo DELETE");
 	}
 
