@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -11,62 +10,115 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import model.Usuario;
+import repository.UsuarioRepository;
+import repository.UsuarioRepositoryLista;
 
-@WebServlet(urlPatterns = { "/usucontroller", "/usuariocontroller"})
+@WebServlet(urlPatterns = { "/usucontroller", "/usuariocontroller" })
 public class UsuarioController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	
-	List<Usuario> usuarios = new ArrayList<>();
-	
-	public void cadastrar(Usuario usuario) {
-		this.usuarios.add(usuario);
-	}
-	
-	public void excluir(Usuario usuario) {
-		this.usuarios.remove(usuario);
-	}
-	
-	public List<Usuario> buscarTodos() {
-		return this.usuarios;
-	}
-	
-	
+
+	private UsuarioRepository usuarioRepository;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
-		//leitura
+
+		// leitura
 		String nome = req.getParameter("nome");
 		String senha = req.getParameter("senha");
-		
-		//instancia o objeto e seta os dados lidos	
+
+		// instancia o objeto e seta os dados lidos
 		Usuario usuario = new Usuario();
 		usuario.setNome(nome);
 		usuario.setSenha(senha);
-		
-		//gravar
-		this.cadastrar(usuario);
-		//resposta
+
+		// gravar
+		this.usuarioRepository.cadastrar(usuario);
+		// resposta
 		resp.getWriter().println("Cadastrado: " + nome + " " + senha);
 	}
-	
+
+	@Override
+	public void init() throws ServletException {
+		
+		this.usuarioRepository = new UsuarioRepositoryLista();
+		
+		Usuario u1 = new Usuario();
+		u1.setNome("Paulo");
+		u1.setSenha("1313");
+
+		Usuario u2 = new Usuario();
+		u2.setNome("Fernanda");
+		u2.setSenha("0404");
+		
+		Usuario u3 = new Usuario();
+		u3.setNome("Patricia");
+		u3.setSenha("1111");
+
+		this.usuarioRepository.cadastrar(u1);
+		this.usuarioRepository.cadastrar(u2);
+		this.usuarioRepository.cadastrar(u3);
+
+		super.init();
+	}
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+		List<Usuario> lista = this.usuarioRepository.buscarTodos();
+		String json = "[";
 		
-		resp.getWriter().println(this.buscarTodos());
+		for (int i = 0; i < lista.size(); i++) {
+			Usuario u = lista.get(i);
+			
+			json += "{ \"nome\": \"" + u.getNome() + "\", \"senha\": \"" + u.getSenha() + "\"}";
+			
+			if(i < lista.size() - 1) {
+				json += ",";
+			}
+		}
+		
+		json += "]";
+		
+		resp.getWriter().println(json);
 	}
-	
+
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.getWriter().println("Requesitou pelo PUT");
+		// leitura
+		int indice = Integer.parseInt(req.getParameter("indice"));
+		String nome = req.getParameter("nome");
+		String senha = req.getParameter("senha");
+
+		// Busca o usuario a ser alterado
+		Usuario usuarioAntigo = this.usuarioRepository.buscarPorIndice(indice);
+		
+		// Mostra os dados que serão alterados
+		resp.getWriter().println("Dados originais Nome: " + usuarioAntigo.getNome() + " - Senha: " + usuarioAntigo.getSenha());
+		
+		// instancia o objeto e seta os dados lidos
+		Usuario usuario = new Usuario();
+		usuario.setNome(nome);
+		usuario.setSenha(senha);
+
+		// Altera
+		this.usuarioRepository.alterar(indice, usuario);
+
+		// Mostra os dados já alterados
+		resp.getWriter().println("Dados alterados para Nome: " + usuario.getNome() + " - Senha: " + usuario.getSenha() );
 	}
-	
+
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
-		
-		resp.getWriter().println("Requesitou pelo DELETE");
+
+		int indice = Integer.parseInt(req.getParameter("indice"));
+
+		try {
+			this.usuarioRepository.excluir(indice);
+
+		} catch (Exception e) {
+			throw new ServletException("Não pode excluir!");
+		}
 	}
 
 }
