@@ -2,7 +2,9 @@ package repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import model.Usuario;
@@ -10,16 +12,17 @@ import model.Usuario;
 public class UsuarioRepositoryBanco implements UsuarioRepository{
 	
 	private Connection conexao = ConexaoFactory.criarConexao();
+	private PreparedStatement preparadorSQL;
 
 	public void cadastrar(Usuario usuario) {
 		
 		try {
-			PreparedStatement preparadorSQL = this.conexao.prepareStatement("insert into usuario (nome, senha) values (?, ?)");
-			preparadorSQL.setString(1, usuario.getNome());
-			preparadorSQL.setString(2, usuario.getSenha());
+			this.preparadorSQL = this.conexao.prepareStatement("insert into usuario (nome, senha) values (?, ?)");
+			this.preparadorSQL.setString(1, usuario.getNome());
+			this.preparadorSQL.setString(2, usuario.getSenha());
 			
-			preparadorSQL.execute();
-			preparadorSQL.close();
+			this.preparadorSQL.execute();
+			this.preparadorSQL.close();
 			
 		} catch (SQLException e) {
 			
@@ -36,13 +39,13 @@ public class UsuarioRepositoryBanco implements UsuarioRepository{
 	public void alterar(Usuario usuario) {
 		
 		try {
-			PreparedStatement preparadorSQL = this.conexao.prepareStatement("update usuario set nome = ?, senha = ? where id = ?");
-			preparadorSQL.setString(1, usuario.getNome());
-			preparadorSQL.setString(2, usuario.getSenha());
-			preparadorSQL.setInt(3, usuario.getId());
+			this.preparadorSQL = this.conexao.prepareStatement("update usuario set nome = ?, senha = ? where id = ?");
+			this.preparadorSQL.setString(1, usuario.getNome());
+			this.preparadorSQL.setString(2, usuario.getSenha());
+			this.preparadorSQL.setInt(3, usuario.getId());
 			
-			preparadorSQL.execute();
-			preparadorSQL.close();
+			this.preparadorSQL.execute();
+			this.preparadorSQL.close();
 			
 		} catch (SQLException e) {
 			
@@ -50,15 +53,74 @@ public class UsuarioRepositoryBanco implements UsuarioRepository{
 		}
 	}
 
-	public void excluir(int indice) {
+	public void excluir(int id) {
+		
+		try {
+			this.preparadorSQL = this.conexao.prepareStatement("delete from usuario where id = ?");
+			this.preparadorSQL.setInt(1, id);
+			
+			this.preparadorSQL.execute();
+			this.preparadorSQL.close();
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
 
 	}
 
 	public List<Usuario> buscarTodos() {
-		return null;
+		
+		List<Usuario> usuarios = new ArrayList<>();
+		
+		try {
+			this.preparadorSQL = this.conexao.prepareStatement("select * from usuario");
+		
+			ResultSet resultSet = this.preparadorSQL.executeQuery();
+			
+			while (resultSet.next()) {
+				Usuario usuario = new Usuario();
+				usuario.setId(resultSet.getInt("id"));
+				usuario.setNome(resultSet.getString("nome"));
+				usuario.setSenha(resultSet.getString("senha"));
+				
+				usuarios.add(usuario);
+			}
+			
+			this.preparadorSQL.close();
+			// resultSet.close();
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		return usuarios;
 	}
 
-	public Usuario buscarPorIndice(int indice) {
+	public Usuario buscarPorIndice(int id) {	
+		
+		try {
+			this.preparadorSQL = this.conexao.prepareStatement("select from usuario where id = ?");
+			this.preparadorSQL.setInt(1, id);
+			
+			ResultSet resultSet = this.preparadorSQL.executeQuery();
+			
+			if (resultSet.next()) {
+				Usuario usuario = new Usuario();
+				usuario.setId(resultSet.getInt("id"));
+				usuario.setNome(resultSet.getString("nome"));
+				usuario.setSenha(resultSet.getString("senha"));
+				
+				return usuario;
+			}
+			
+			this.preparadorSQL.close();
+			// resultSet.close();
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
 		return null;
 	}
 

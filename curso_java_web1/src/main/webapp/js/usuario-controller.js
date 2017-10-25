@@ -35,7 +35,7 @@ usuarioController = function () {
           this.usuarioService.adicionar(usu);
       }
 
-      this.aoClicarListar();
+      // this.aoClicarListar();
       this.limparCampos();
   }
 
@@ -46,13 +46,15 @@ usuarioController = function () {
   }
 
   this.aoClicarListar = function () {
-      usuarios = this.usuarioService.buscarTodos();
-      this.renderizarTabelaUsuarios(usuarios);
+      usuarios = this.usuarioService.buscarTodos(function (usuarios) {
+    	  // window.alert(usuarios);
+    	  this.renderizarTabelaUsuarios(usuarios);
+      });
   }
 
   this.aoClicarExcluir = function (indice) {
       this.usuarioService.excluir(indice);
-      this.aoClicarListar();
+      // this.aoClicarListar();
   }
 
   this.aoClicarEditar = function (indice) {

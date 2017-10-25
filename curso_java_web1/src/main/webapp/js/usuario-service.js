@@ -1,28 +1,39 @@
-UsuarioService = function () {
-  this.usuarios = [];
+UsuarioService = function() {
+	this.usuarios = [];
 
-  // Create
-  this.adicionar = function (usuario) {
-      this.usuarios.push(usuario);
-  }
+	// Create
+	this.adicionar = function(usuario) {
+		this.usuarios.push(usuario);
+	}
 
-  // Retrieve
-  this.buscarTodos = function () {
-      return this.usuarios;
-  }
+	// Retrieve
+	this.buscarTodos = function(cb) {
 
-  // Update
-  this.alterar = function (indice, usuario) {
-      //usuarioEncontrado = this.buscarPorIndice(indice);
-      this.usuarios.splice(indice, 1, usuario);
-  }
+		var xhttp = new XMLHttpRequest();
+		
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				cb (JSON.parse(this.responseText));
+			}
+		};
+		xhttp.open("GET", "usucontroller", true);
+		xhttp.send();
 
-  // Delete
-  this.excluir = function (indice) {
-      this.usuarios.splice(indice, 1);
-  }
+		return this.usuarios;
+	}
 
-  this.buscarPorIndice = function (indice) {
-      return this.usuarios[indice];
-  }
+	// Update
+	this.alterar = function(indice, usuario) {
+		// usuarioEncontrado = this.buscarPorIndice(indice);
+		this.usuarios.splice(indice, 1, usuario);
+	}
+
+	// Delete
+	this.excluir = function(indice) {
+		this.usuarios.splice(indice, 1);
+	}
+
+	this.buscarPorIndice = function(indice) {
+		return this.usuarios[indice];
+	}
 }

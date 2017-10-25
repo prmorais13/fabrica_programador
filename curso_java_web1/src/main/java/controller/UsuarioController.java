@@ -112,10 +112,11 @@ public class UsuarioController extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		int indice = Integer.parseInt(req.getParameter("indice"));
+		int id = Integer.parseInt(req.getParameter("id"));
 
 		try {
-			this.usuarioRepository.excluir(indice);
+			this.usuarioRepository.excluir(id);
+			resp.getWriter().println("Exclusão realizada com sucesso!");
 
 		} catch (Exception e) {
 			throw new ServletException("Não pode excluir!");
