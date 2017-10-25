@@ -16,4 +16,6 @@ public interface UsuarioRepository {
 
 	public Usuario buscarPorIndice(int indice);
 
+	public void alterar(Usuario usuario);
+
 }

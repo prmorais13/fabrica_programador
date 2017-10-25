@@ -11,14 +11,18 @@ public class ConexaoFactory {
 	public static Connection criarConexao() {	
 		
 		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			
 			if(conexao == null ) {
-				conexao = DriverManager.getConnection("jdbc:mysql://10.19.0.11:3306/curso_javaweb1_db", "root", "Paulo13");
+				conexao = DriverManager.getConnection("jdbc:mysql://localhost:3306/curso_javaweb1_db", "root", "Paulo13");
 			}
 			
 			return conexao;
 		
-		} catch (SQLException e) {
+		} catch (SQLException e) {	
+			e.printStackTrace();
 			
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return null;

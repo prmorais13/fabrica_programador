@@ -29,4 +29,10 @@ public class UsuarioRepositoryLista implements UsuarioRepository{
 		return this.usuarios.get(indice);
 	}
 
+	@Override
+	public void alterar(Usuario usuario) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
