@@ -6,15 +6,15 @@ import model.Usuario;
 
 public interface UsuarioRepository {
 	
-	public void cadastrar(Usuario usuario);
+	public void cadastrar(Usuario usuario) throws RepositoryException;
 
-	public void alterar(int indice, Usuario usuario);
+	public void alterar(int id, Usuario usuario);
 
-	public void excluir(int indice);
+	public void excluir(int id);
 
 	public List<Usuario> buscarTodos();
 
-	public Usuario buscarPorIndice(int indice);
+	public Usuario buscarPorId(int id);
 
 	public void alterar(Usuario usuario);
 

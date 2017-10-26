@@ -14,7 +14,7 @@ public class ConexaoFactory {
 			Class.forName("com.mysql.jdbc.Driver");
 			
 			if(conexao == null ) {
-				conexao = DriverManager.getConnection("jdbc:mysql://localhost:3306/curso_javaweb1_db", "root", "Paulo13");
+				conexao = DriverManager.getConnection("jdbc:mysql://localhost:3306/curso_javaweb1_db?useSSL=false", "root", "Paulo13");
 			}
 			
 			return conexao;

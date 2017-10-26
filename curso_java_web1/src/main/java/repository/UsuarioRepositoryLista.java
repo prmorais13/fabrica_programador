@@ -35,4 +35,10 @@ public class UsuarioRepositoryLista implements UsuarioRepository{
 		
 	}
 
+	@Override
+	public Usuario buscarPorId(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

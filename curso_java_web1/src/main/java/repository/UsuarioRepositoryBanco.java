@@ -14,7 +14,7 @@ public class UsuarioRepositoryBanco implements UsuarioRepository{
 	private Connection conexao = ConexaoFactory.criarConexao();
 	private PreparedStatement preparadorSQL;
 
-	public void cadastrar(Usuario usuario) {
+	public void cadastrar(Usuario usuario) throws RepositoryException {
 		
 		try {
 			this.preparadorSQL = this.conexao.prepareStatement("insert into usuario (nome, senha) values (?, ?)");
@@ -25,8 +25,7 @@ public class UsuarioRepositoryBanco implements UsuarioRepository{
 			this.preparadorSQL.close();
 			
 		} catch (SQLException e) {
-			
-			e.printStackTrace();
+			throw new RepositoryException(e);
 		}
 
 	}
@@ -94,24 +93,25 @@ public class UsuarioRepositoryBanco implements UsuarioRepository{
 			
 			e.printStackTrace();
 		}
+		
 		return usuarios;
 	}
 
-	public Usuario buscarPorIndice(int id) {	
+	public Usuario buscarPorId(int id) {	
+		
+		Usuario usuario = null;
 		
 		try {
-			this.preparadorSQL = this.conexao.prepareStatement("select from usuario where id = ?");
+			this.preparadorSQL = this.conexao.prepareStatement("select * from usuario where id = ?");
 			this.preparadorSQL.setInt(1, id);
 			
 			ResultSet resultSet = this.preparadorSQL.executeQuery();
 			
 			if (resultSet.next()) {
-				Usuario usuario = new Usuario();
+				usuario = new Usuario();
 				usuario.setId(resultSet.getInt("id"));
 				usuario.setNome(resultSet.getString("nome"));
 				usuario.setSenha(resultSet.getString("senha"));
-				
-				return usuario;
 			}
 			
 			this.preparadorSQL.close();
@@ -121,7 +121,7 @@ public class UsuarioRepositoryBanco implements UsuarioRepository{
 			
 			e.printStackTrace();
 		}
-		return null;
+		return usuario;
 	}
 
 }

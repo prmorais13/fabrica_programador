@@ -12,8 +12,8 @@ usuarioController = function () {
           dados += "<td>" + arrUsuarios[i].id + "</td>";
           dados += "<td>" + arrUsuarios[i].nome + "</td>";
           dados += "<td>" + arrUsuarios[i].senha + "</td>";
-          dados += "<td><input type='button' value='Excluir' onclick='uc.aoClicarExcluir(" + i + ")'>";
-          dados += "<input type='button' value='Editar' onclick='uc.aoClicarEditar(" + i + ")'></td>";
+          dados += "<td><input type='button' value='Excluir' onclick='uc.aoClicarExcluir(" + arrUsuarios[i].id + ")'>";
+          dados += "<input type='button' value='Editar' onclick='uc.aoClicarEditar(" + arrUsuarios[i].id + ")'></td>";
           dados += "</tr>"
       }
       document.getElementById('tbUsuarios').innerHTML = dados;
@@ -22,18 +22,40 @@ usuarioController = function () {
 
   // Eventos dos botões
   this.aoClicarSalvar = function () {
+	  
+	  var self = this;
+	  
       //Leitura dos dados
+	  idUsuario = document.getElementById('txtId').value;
       nomeUsuario = document.getElementById('txtUsuario').value;
       senhaUsuario = document.getElementById('txtSenha').value;
 
       // Constroi objeto usuario
-      usu = { nome: nomeUsuario, senha: senhaUsuario };
+      // usu = { nome: nomeUsuario, senha: senhaUsuario };
+      usu = "";
 
       // Adicionar ou altera ao vetor
-      if (this.modoEdicao) {
-          this.usuarioService.alterar(this.indiceEdicao, usu);
+      if (idUsuario != "") {
+    	  
+    	  usu = "id=" + idUsuario + "&nome=" + nomeUsuario + "&senha=" + senhaUsuario;
+    	  
+    	  this.usuarioService.alterar(usu, function() {
+    		  window.alert("Alterado com sucesso!");
+    		  self.aoClicarListar();
+    	  }, function(){
+    		  window.alert("Erro ao alterar!");
+    	  });
+    	  
       } else {
-          this.usuarioService.adicionar(usu);
+    	  
+    	  usu = "nome=" + nomeUsuario + "&senha=" + senhaUsuario;
+    	  
+          this.usuarioService.adicionar(usu, function() {
+        	  window.alert("Adicionado com sucesso!");
+        	  self.aoClicarListar();
+          }, function() {
+        	  window.alert("Erro ao salvar!");
+          });
       }
 
       // this.aoClicarListar();
@@ -50,23 +72,35 @@ usuarioController = function () {
 	  
 	  var self = this;
 	  
-      usuarios = this.usuarioService.buscarTodos(function (usuarios) {
-    	  // window.alert(usuarios);
+      this.usuarioService.buscarTodos(function (usuarios) {
     	  self.renderizarTabelaUsuarios(usuarios);
       });
   }
 
-  this.aoClicarExcluir = function (indice) {
-      this.usuarioService.excluir(indice);
-      // this.aoClicarListar();
+  this.aoClicarExcluir = function (id) {
+	  
+	  if (window.confirm("Deseja excluir usuário id: " + id + "?")) {
+	  
+		  var self = this;
+		  
+	      this.usuarioService.excluir(id, function(){
+	    	  self.aoClicarListar();
+	    	  window.alert("Excluído com sucesso!");
+	      });
+	  }
+
   }
 
-  this.aoClicarEditar = function (indice) {
-      this.modoEdicao = true;
-      this.indiceEdicao = indice;
-      usuarioEncontrado = this.usuarioService.buscarPorIndice(indice);
-      document.getElementById('txtUsuario').value = usuarioEncontrado.nome;
-      document.getElementById('txtSenha').value = usuarioEncontrado.senha;
+  this.aoClicarEditar = function (id) {
+      
+	  this.modoEdicao = true;
+      this.indiceEdicao = id;
+      
+      this.usuarioService.buscarPorId(id, function(usuarioEncontrado) {
+    	  document.getElementById('txtId').value = usuarioEncontrado.id;
+    	  document.getElementById('txtUsuario').value = usuarioEncontrado.nome;
+    	  document.getElementById('txtSenha').value = usuarioEncontrado.senha;	  
+      });
   }
 
   this.aoClicarCancelar = function () {

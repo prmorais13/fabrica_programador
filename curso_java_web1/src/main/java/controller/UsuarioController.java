@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import model.Usuario;
+import repository.RepositoryException;
 import repository.UsuarioRepository;
 import repository.UsuarioRepositoryBanco;
 
@@ -57,38 +58,62 @@ public class UsuarioController extends HttpServlet {
 		usuario.setSenha(senha);
 
 		// gravar
-		this.usuarioRepository.cadastrar(usuario);
+		try {
+			this.usuarioRepository.cadastrar(usuario);;
+			
+		} catch (RepositoryException e) {
+			throw new ServletException(e);
+		}
 		// resposta
 		resp.getWriter().println("Cadastrado: " + nome + " " + senha);
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		if (req.getParameter("id") != null) {
+			
+			int id = Integer.parseInt(req.getParameter("id"));
+			
+			Usuario u =  this.usuarioRepository.buscarPorId(id);
+			
+			String json = "{ \"id\": \"" + u.getId() + "\", \"nome\": \"" + u.getNome() + "\", \"senha\": \"" + u.getSenha() + "\"}";
+			
+			resp.getWriter().println(json);
 
-		List<Usuario> lista = this.usuarioRepository.buscarTodos();
-		String json = "[";
-
-		for (int i = 0; i < lista.size(); i++) {
-			Usuario u = lista.get(i);
-
-			json += "{ \"id\": \"" + u.getId() + "\", \"nome\": \"" + u.getNome() + "\", \"senha\": \"" + u.getSenha() + "\"}";
-
-			if (i < lista.size() - 1) {
-				json += ",";
+		} else {
+			
+			List<Usuario> lista = this.usuarioRepository.buscarTodos();
+			
+			String json = "[";
+	
+			for (int i = 0; i < lista.size(); i++) {
+				
+				Usuario u = lista.get(i);
+	
+				json += "{ \"id\": \"" + u.getId() + "\", \"nome\": \"" + u.getNome() + "\", \"senha\": \"" + u.getSenha() + "\"}";
+	
+				if (i < lista.size() - 1) {
+					json += ",";
+				}
 			}
+	
+			json += "]";
+			
+			resp.getWriter().println(json);
 		}
+		
 
-		json += "]";
-
-		resp.getWriter().println(json);
 	}
 
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// leitura
-		int id = Integer.parseInt(req.getParameter("id"));
-		String nome = req.getParameter("nome");
-		String senha = req.getParameter("senha");
+		if (req.getParameter("id") != null) {
+			int id = Integer.parseInt(req.getParameter("id"));
+			String nome = req.getParameter("nome");
+			String senha = req.getParameter("senha");
+		
 
 		/*// Busca o usuario a ser alterado
 		Usuario usuarioAntigo = this.usuarioRepository.buscarPorIndice(indice);
@@ -107,19 +132,23 @@ public class UsuarioController extends HttpServlet {
 
 		// Mostra os dados já alterados
 		resp.getWriter().println("Dados alterados para Nome: " + usuario.getNome() + " - Senha: " + usuario.getSenha());
+		}
 	}
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		if (req.getParameter("id") != null ) {
+			
+			int id = Integer.parseInt(req.getParameter("id"));
 
-		int id = Integer.parseInt(req.getParameter("id"));
-
-		try {
-			this.usuarioRepository.excluir(id);
-			resp.getWriter().println("Exclusão realizada com sucesso!");
-
-		} catch (Exception e) {
-			throw new ServletException("Não pode excluir!");
+			try {
+				this.usuarioRepository.excluir(id);
+				resp.getWriter().println("Exclusão realizada com sucesso!");
+	
+			} catch (Exception e) {
+				throw new ServletException("Não pode excluir!");
+			}
 		}
 	}
 
