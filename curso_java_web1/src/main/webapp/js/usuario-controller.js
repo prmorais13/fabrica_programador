@@ -61,7 +61,7 @@ usuarioController = function () {
   }
 
   this.limparCampos = function () {
-      // this.modoEdicao = false;
+	  
 	  document.getElementById('txtId').value = "";
       document.getElementById('txtUsuario').value = "";
       document.getElementById('txtSenha').value = "";
