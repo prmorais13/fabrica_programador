@@ -1,7 +1,8 @@
 UsuarioService = function() {
+	// Cria o array usuarios vazio
 	this.usuarios = [];
 
-	// Create
+	// Adiciona novos registros
 	this.adicionar = function(usuario, sucesso, erro) {
 		
 		var xhttp = new XMLHttpRequest();
@@ -22,28 +23,7 @@ UsuarioService = function() {
 		xhttp.send(usuario);	
 	}
 
-	// Retrieve
-	this.buscarTodos = function(cb) {
-
-		var xhttp = new XMLHttpRequest();
-		
-		xhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-				cb (JSON.parse(this.responseText));
-			}
-		};
-		xhttp.open("GET", "usucontroller", true);
-		xhttp.send();
-
-		return this.usuarios;
-	}
-
-	// Update
-	/*this.alterar = function(indice, usuario) {
-		// usuarioEncontrado = this.buscarPorIndice(indice);
-		this.usuarios.splice(indice, 1, usuario);
-	}*/
-	
+	// Altera registros já existentes
 	this.alterar = function(usuario, sucesso, erro) {
 		
 		var xhttp = new XMLHttpRequest();
@@ -63,8 +43,8 @@ UsuarioService = function() {
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhttp.send();
 	}
-
-	// Delete
+	
+	// Exclui registros
 	this.excluir = function(id, cb) {
 		
 		var xhttp = new XMLHttpRequest();
@@ -77,10 +57,25 @@ UsuarioService = function() {
 		
 		xhttp.open("DELETE", "usucontroller?id=" + id, true);
 		xhttp.send();
-		//this.usuarios.splice(indice, 1);
+	}
+	
+	// Busca todos os registros
+	this.buscarTodos = function(cb) {
+
+		var xhttp = new XMLHttpRequest();
+		
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				cb (JSON.parse(this.responseText));
+			}
+		};
+		xhttp.open("GET", "usucontroller", true);
+		xhttp.send();
+
+		return this.usuarios;
 	}
 
-	//Busca por id
+	// Busca registro por id
 	this.buscarPorId = function(id, cb) {
 		
 		var xhttp = new XMLHttpRequest();

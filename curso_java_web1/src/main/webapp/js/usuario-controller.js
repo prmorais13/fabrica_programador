@@ -1,19 +1,19 @@
 usuarioController = function () {
   this.usuarioService = new UsuarioService();
   
-  this.modoEdicao = false;
+  // this.modoEdicao = false;
 
   // Renderiza o DOM
-  this.renderizarTabelaUsuarios = function (arrUsuarios) {
+  this.renderizarTabelaUsuarios = function (usuarios) {
       dados = "";
 
-      for (i = 0; i < arrUsuarios.length; i++) {
+      for (i = 0; i < usuarios.length; i++) {
           dados += "<tr>";
-          dados += "<td>" + arrUsuarios[i].id + "</td>";
-          dados += "<td>" + arrUsuarios[i].nome + "</td>";
-          dados += "<td>" + arrUsuarios[i].senha + "</td>";
-          dados += "<td><input type='button' value='Excluir' onclick='uc.aoClicarExcluir(" + arrUsuarios[i].id + ")'>";
-          dados += "<input type='button' value='Editar' onclick='uc.aoClicarEditar(" + arrUsuarios[i].id + ")'></td>";
+          dados += "<td>" + usuarios[i].id + "</td>";
+          dados += "<td>" + usuarios[i].nome + "</td>";
+          dados += "<td>" + usuarios[i].senha + "</td>";
+          dados += "<td><input type='button' value='Excluir' onclick='uc.aoClicarExcluir(" + usuarios[i].id + ")'>";
+          dados += "<input type='button' value='Editar' onclick='uc.aoClicarEditar(" + usuarios[i].id + ")'></td>";
           dados += "</tr>"
       }
       document.getElementById('tbUsuarios').innerHTML = dados;
@@ -29,10 +29,8 @@ usuarioController = function () {
 	  idUsuario = document.getElementById('txtId').value;
       nomeUsuario = document.getElementById('txtUsuario').value;
       senhaUsuario = document.getElementById('txtSenha').value;
-
-      // Constroi objeto usuario
-      // usu = { nome: nomeUsuario, senha: senhaUsuario };
-      usu = "";
+      
+      // usu = "";
 
       // Adicionar ou altera ao vetor
       if (idUsuario != "") {
@@ -41,7 +39,7 @@ usuarioController = function () {
     	  
     	  this.usuarioService.alterar(usu, function() {
     		  window.alert("Alterado com sucesso!");
-    		  self.aoClicarListar();
+    		  // self.aoClicarListar();
     	  }, function(){
     		  window.alert("Erro ao alterar!");
     	  });
@@ -52,18 +50,19 @@ usuarioController = function () {
     	  
           this.usuarioService.adicionar(usu, function() {
         	  window.alert("Adicionado com sucesso!");
-        	  self.aoClicarListar();
+        	  // self.aoClicarListar();
           }, function() {
         	  window.alert("Erro ao salvar!");
           });
       }
 
-      // this.aoClicarListar();
+      this.aoClicarListar();
       this.limparCampos();
   }
 
   this.limparCampos = function () {
-      this.modoEdicao = false;
+      // this.modoEdicao = false;
+	  document.getElementById('txtId').value = "";
       document.getElementById('txtUsuario').value = "";
       document.getElementById('txtSenha').value = "";
   }
@@ -84,17 +83,19 @@ usuarioController = function () {
 		  var self = this;
 		  
 	      this.usuarioService.excluir(id, function(){
-	    	  self.aoClicarListar();
+	    	  // self.aoClicarListar();
 	    	  window.alert("Excluído com sucesso!");
 	      });
 	  }
+	  
+	  this.aoClicarListar();
 
   }
 
   this.aoClicarEditar = function (id) {
       
-	  this.modoEdicao = true;
-      this.indiceEdicao = id;
+	  // this.modoEdicao = true;
+      //this.indiceEdicao = id;
       
       this.usuarioService.buscarPorId(id, function(usuarioEncontrado) {
     	  document.getElementById('txtId').value = usuarioEncontrado.id;
